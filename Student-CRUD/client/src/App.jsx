@@ -1,6 +1,6 @@
 import { useState } from "react";
+import AddModal from "./Modals/AddModal";
 import { Button, Modal } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   const [students, setStudents] = useState([
@@ -27,9 +27,9 @@ function App() {
     },
   ]);
 
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
-  const handleShow = () => setShowModal(true);
-  const handleClose = () => setShowModal(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false); // State to control modal visibility
+  const handleUpdateShow = () => setShowUpdateModal(true);
+  const handleUpdateClose = () => setShowUpdateModal(false);
 
   const deleteStudent = (index) => {
     const updatedStudents = students.filter((_, i) => i !== index);
@@ -59,14 +59,7 @@ function App() {
                 <option value="option2">Option 2</option>
               </select>
             </div>
-            <button
-              onClick={handleShow}
-              className="bg-customGreen text-white px-3 py-1 rounded-md shadow hover:bg-green-600 transition"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
-                <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
-              </svg>
-            </button>
+            <AddModal />
           </div>
 
           <div className="overflow-x-auto">
@@ -103,8 +96,9 @@ function App() {
                       {student.course}
                     </td>
                     <td className="py-2 px-4 border border-gray-300 text-center">
+
                       <button
-                        onClick={() => alert(`Update for ${student.name}`)}
+                        onClick={handleUpdateShow}
                         className="bg-blue-500 text-white px-3 py-1 rounded-md shadow hover:bg-blue-600 transition"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
@@ -112,6 +106,7 @@ function App() {
                         </svg>
 
                       </button>
+
                       <button
                         onClick={() => deleteStudent(index)}
                         className="bg-red-500 text-white px-3 py-1 rounded-md shadow ml-2 hover:bg-red-600 transition"
@@ -130,8 +125,7 @@ function App() {
         </div>
       </div>
 
-      {/* Modal Component */}
-      <Modal show={showModal} onHide={handleClose} centered>
+      <Modal show={showUpdateModal} onHide={handleUpdateClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>Modal Heading</Modal.Title>
         </Modal.Header>
@@ -140,14 +134,15 @@ function App() {
           <p>This is the content inside the modal.</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={handleUpdateClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={handleUpdateClose}>
             Save Changes
           </Button>
         </Modal.Footer>
       </Modal>
+
     </>
   );
 }
