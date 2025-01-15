@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AddModal from "./Modals/AddModal";
-import { Button, Modal } from "react-bootstrap";
+import UpdateModal from "./Modals/UpdateModal";
 
 function App() {
   const [students, setStudents] = useState([
@@ -27,9 +27,16 @@ function App() {
     },
   ]);
 
-  const [showUpdateModal, setShowUpdateModal] = useState(false); // State to control modal visibility
-  const handleUpdateShow = () => setShowUpdateModal(true);
-  const handleUpdateClose = () => setShowUpdateModal(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null); // State to store the selected student
+  const handleUpdateShow = (student) => {
+    setSelectedStudent(student);
+    setShowUpdateModal(true);
+  };
+  const handleUpdateClose = () => {
+    setSelectedStudent(null)
+    setShowUpdateModal(false);
+  }
 
   const deleteStudent = (index) => {
     const updatedStudents = students.filter((_, i) => i !== index);
@@ -98,7 +105,7 @@ function App() {
                     <td className="py-2 px-4 border border-gray-300 text-center">
 
                       <button
-                        onClick={handleUpdateShow}
+                        onClick={() => handleUpdateShow(student)}
                         className="bg-blue-500 text-white px-3 py-1 rounded-md shadow hover:bg-blue-600 transition"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
@@ -125,23 +132,11 @@ function App() {
         </div>
       </div>
 
-      <Modal show={showUpdateModal} onHide={handleUpdateClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal Heading</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {/* Your modal content here */}
-          <p>This is the content inside the modal.</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleUpdateClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleUpdateClose}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <UpdateModal
+        showModal={showUpdateModal}
+        handleClose={handleUpdateClose}
+        student={selectedStudent}
+      />
 
     </>
   );
