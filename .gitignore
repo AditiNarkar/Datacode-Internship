@@ -1,0 +1,26 @@
+Student-CRUD/node_modules/
+
+# Logs
+Student-CRUD/logs
+Student-CRUD/*.log
+Student-CRUD/npm-debug.log*
+Student-CRUD/yarn-debug.log*
+Student-CRUD/yarn-error.log*
+Student-CRUD/pnpm-debug.log*
+Student-CRUD/lerna-debug.log*
+
+Student-CRUD/node_modules
+Student-CRUD/dist
+Student-CRUD/dist-ssr
+Student-CRUD/*.local
+
+# Editor directories and files
+Student-CRUD/.vscode/*
+Student-CRUD/!.vscode/extensions.json
+Student-CRUD/.idea
+Student-CRUD/.DS_Store
+Student-CRUD/*.suo
+Student-CRUD/*.ntvs*
+Student-CRUD/*.njsproj
+Student-CRUD/*.sln
+Student-CRUD/*.sw?
