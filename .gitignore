@@ -10,6 +10,8 @@ Student-CRUD/pnpm-debug.log*
 Student-CRUD/lerna-debug.log*
 
 Student-CRUD/client/node_modules
+Student-CRUD/server/node_modules
+Student-CRUD/server/.env
 Student-CRUD/client/dist
 Student-CRUD/client/dist-ssr
 Student-CRUD/client/*.local

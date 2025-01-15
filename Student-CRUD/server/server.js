@@ -1,0 +1,31 @@
+const express = require('express')
+const cors = require('cors')
+const router = require('./routes/routes.js')
+const dotenv = require('dotenv')
+dotenv.config()
+
+const connectDB = require('./config/db.js')
+connectDB()
+
+const app = express()
+
+app.use(express.json());
+
+// app.use(express.urlencoded({
+//     extended: true,
+//     limit: '50mb'
+// }))
+
+app.use(cors({
+    // origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true
+}))
+
+const PORT = process.env.PORT
+console.log(PORT)
+app.use("/api/", router)
+
+app.listen(PORT, () => {
+    console.log("Running at", PORT)
+})
