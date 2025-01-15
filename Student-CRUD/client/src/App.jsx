@@ -61,7 +61,7 @@ function App() {
                 className="px-3 py-1 border border-gray-300 rounded-md"
               />
               <select className="px-3 py-1 border border-gray-300 rounded-md">
-                <option value="">Filter</option>
+                <option value="">Filter by Course</option>
                 <option value="option1">Option 1</option>
                 <option value="option2">Option 2</option>
               </select>

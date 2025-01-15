@@ -6,7 +6,7 @@ const UpdateModal = ({ showModal, handleClose, student }) => {
         return (
             <Modal show={showModal} onHide={handleClose} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Update Student Info</Modal.Title>
+                    <Modal.Title>Update Student</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="flex flex-col space-y-4">
