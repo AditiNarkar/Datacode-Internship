@@ -90,7 +90,7 @@ const filterStudentsByCourse = async (req, res) => {
             return res.status(400).json({ msg: "Course is required for filtering." });
         }
 
-        const students = await STUDENT.find({ course });
+        const students = await STUDENT.find({ course: course });
         res.status(200).json({ students });
     } catch (error) {
         console.error("Error filtering students by course:", error);
