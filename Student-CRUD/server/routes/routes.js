@@ -1,25 +1,32 @@
 const express = require("express");
 const {
+    getStudent,
     createStudent,
-    getStudents,
+    getAllStudents,
     updateStudent,
     deleteStudent,
-    filterStudentsByCourse,
-    sortStudents,
-    searchStudents
+    searchStudents,
+    getAllExams,
+    getExam,
+    createExam,
+    filterAndSortStudents
 } = require("../controller/userController.js");
 
 const router = express.Router();
 
-router.post('/create', createStudent)
-router.put('/update/:id', updateStudent)
-router.delete('/delete/:id', deleteStudent)
+router.get('/student/:id', getStudent)
+router.get('/filterSort', filterAndSortStudents)
+router.get('/students', getAllStudents)
+router.post('/student', createStudent)
+router.patch('/student/:id', updateStudent)
+// router.delete('/student/:id', deleteStudent)
 
-//readers
-router.get('/', getStudents)
-router.get('/filter', filterStudentsByCourse)
-router.get('/sort', sortStudents)
+router.get('/exam/:id', getExam)
+router.get('/exams', getAllExams)
+router.post('/exam', createExam)
+// router.patch('/exam/:id', updateExam)
+// router.delete('/exam/:id', deleteExam)
+
 router.get('/search', searchStudents)
-
 
 module.exports = router;

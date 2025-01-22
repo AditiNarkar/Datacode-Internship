@@ -10,6 +10,12 @@ const StudentSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    phone: {
+        type: String
+    },
+    city: {
+        type: String
+    },
     email: {
         type: String,
         required: true,
@@ -31,9 +37,13 @@ const StudentSchema = new mongoose.Schema({
     },
     course: {
         type: String,
-        required: true, 
-        enum: ['Science', 'Arts', 'Commerce', 'Engineering', 'Medicine'],
+        required: true,
+        enum: ['Mech', 'Civil', 'IT', 'CO'],
     },
+    year: {
+        type: String,
+        enum: ['FY', 'SY', 'TY', 'BE']
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('STUDENT', StudentSchema);
