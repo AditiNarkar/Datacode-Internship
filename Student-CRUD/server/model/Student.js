@@ -43,7 +43,11 @@ const StudentSchema = new mongoose.Schema({
     year: {
         type: String,
         enum: ['FY', 'SY', 'TY', 'BE']
+    },
+    bankDetail: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Account'
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('STUDENT', StudentSchema);
+module.exports = mongoose.model('Student', StudentSchema);

@@ -4,7 +4,7 @@ const moment = require('moment');
 const ExamSchema = new mongoose.Schema({
     subject: { type: String, required: true },
     date: { type: Date, required: true, get: (date) => moment(date).format('DD-MM-YYYY') },
-    completedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'STUDENT' }]
+    completedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }]
 }, { toJSON: { getters: true } });
 // to enable getters when the document is converted to JSON
 
