@@ -225,10 +225,37 @@ const createStudentAccount = async (req, res) => {//done
   }
 }
 
-const updateAccount = async (req, res) => {
+const updateAccount = async (req, res) => { //updating bank details remaining
+  const { params: { id }, body: updates } = req;
+  try {
+    const updated = await Account.findByIdAndUpdate(
+      id,
+      updates,
+      { new: true }
+    );
+    if (!updated) {
+      return res.status(404).json({ msg: "Account not found." });
+    }
+    res.status(200).json({ msg: "Account updated successfully", account: updated });
+
+  } catch (examError) {
+    return res.status(500).json({ msg: "Error updating Account", error: examError.message });
+  }
 }
 
-const deleteAccount = async (req, res) => {
+const deleteAccount = async (req, res) => { // updating bank details remaining
+  try {
+    const { id } = req.params;
+
+    const deleted = await Account.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ msg: "account not found." });
+    }
+
+    res.status(200).json({ msg: "account removed successfully", account: deleted });
+  } catch (error) {
+    res.status(500).json({ msg: "Error removing account", error: error.message });
+  }
 }
 
 // EXAM OPERATIONS
