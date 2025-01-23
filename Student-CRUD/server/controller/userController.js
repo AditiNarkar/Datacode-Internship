@@ -1,6 +1,7 @@
 require('../config/db.js')
 const Student = require('../model/Student.js')
-const EXAM = require('../model/Exams.js')
+const EXAM = require('../model/Exams.js');
+const Account = require('../model/Account.js');
 
 // STUDENT OPERATIONS
 const ifStudentExists = async (name, email) => {
@@ -17,7 +18,8 @@ const getStudent = async (req, res) => { // done
     res.status(500).json({ error: err.message });
   }
 }
-const getAllStudents = async (req, res) => { //
+
+const getAllStudents = async (req, res) => { //done
   let { query: { page = 1, limit = 5, sort, search, ...rest } } = req;
   const skip = (page - 1) * limit;
 
@@ -76,13 +78,12 @@ const getAllStudents = async (req, res) => { //
   }
 };
 
-const createStudent = async (req, res) => {//
+const createStudent = async (req, res) => {//done
+  const { rollno, name, phone, city, email, age, course, year, accNo, accType, examId } = req.body;
+  if (!rollno || !name || !phone || !city || !email || !age || !course || !year) {
+    return res.status(400).json({ msg: "All fields are required." });
+  }
   try {
-    const { rollno, name, phone, city, email, age, course, year, examId } = req.body;
-
-    if (!rollno || !name || !phone || !city || !email || !age || !course || !year) {
-      return res.status(400).json({ msg: "All fields are required." });
-    }
     const existingStudent = ifStudentExists(name, email);
     if (existingStudent) {
       return res.status(400).json({ msg: "Student with this rollno or email already exists." });
@@ -90,6 +91,12 @@ const createStudent = async (req, res) => {//
 
     const newStudent = new Student({ rollno, name, phone, city, email, age, course, year });
     await newStudent.save();
+
+    if (accNo && accType) {
+      const newAcc = new Account({ accountNumber: accNo, accountType: accType })
+      const savedAccount = await newAcc.save();
+      newStudent.bankDetail = savedAccount._id;
+    }
 
     if (examId) {
       const updatedExam = await EXAM.findByIdAndUpdate(
@@ -164,11 +171,78 @@ const updateStudent = async (req, res) => { //done
   }
 };
 
+// ACCOUNT OPERATIONS
+const getAccount = async (req, res) => {
+  const { params: { id } } = req
+  try {
+    const account = await Student.findById(id)
+    res.status(200).json({ account });
+
+  } catch (error) {
+    console.error("Error fetching accounts:", error);
+    res.status(500).json({ msg: "Error fetching students", error: error.message });
+  }
+}
+
+const getAllAccounts = async (req, res) => { //done
+  try {
+    const accounts = await Student.find()
+    const total = await Student.countDocuments();
+    res.status(200).json({
+      total,
+      accounts,
+    });
+
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).json({ msg: "Error fetching students", error: error.message });
+  }
+}
+
+const createStudentAccount = async (req, res) => {//done
+  const { params: { id }, body: { accNo, accType } } = req;
+
+  try {
+    console.log(id)
+    const student = await Student.findById(id);
+    if (!student) {
+      return res.status(404).json({ msg: "Student not found" });
+    }
+    const newAcc = new Account({ accountNumber: accNo, accountType: accType });
+    const savedAccount = await newAcc.save();
+    student.bankDetail = savedAccount._id;
+    await student.save();
+
+    res.status(200).json({
+      msg: "Student account created successfully",
+      student: student,
+      bankAccount: savedAccount
+    });
+
+  }
+  catch (error) {
+    res.status(500).json({ msg: "Error creating account", error: error.message });
+  }
+}
+
+const updateAccount = async (req, res) => {
+}
+
+const deleteAccount = async (req, res) => {
+}
 
 // EXAM OPERATIONS
 const getAllExams = async (req, res) => { //done
   try {
-    const exams = await EXAM.find().populate('completedBy', 'name email');
+    const exams = await EXAM.find().populate({
+      path: 'completedBy',
+      // select: 'name email',
+      populate: {
+        path: 'bankDetail',
+        select: 'accountNumber accountType'
+      }
+    }
+    );
     res.status(200).json(exams);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -177,7 +251,14 @@ const getAllExams = async (req, res) => { //done
 
 const getExam = async (req, res) => { // done
   try {
-    const exam = await EXAM.findById(req.params.id).populate('completedBy', 'name email');
+    const exam = await EXAM.findById(req.params.id).populate({
+      path: 'completedBy',
+      select: 'name email',
+      populate: {
+        path: 'bankDetail',
+        select: 'accountNumber accountType'
+      }
+    });
     if (!exam) return res.status(404).json({ error: 'Exam not found' });
     res.status(200).json(exam);
   } catch (err) {
@@ -204,12 +285,53 @@ const createExam = async (req, res) => { // done
   }
 }
 
+const updateExam = async (req, res) => { // done
+  const { params: { id }, body: updates } = req;
+  try {
+    const updatedExam = await EXAM.findByIdAndUpdate(
+      id,
+      updates,
+      { new: true }
+    );
+    if (!updatedExam) {
+      return res.status(404).json({ msg: "Exam not found." });
+    }
+    res.status(200).json({ msg: "Student updated successfully", exam: updatedExam });
+
+  } catch (examError) {
+    return res.status(500).json({ msg: "Error updating exam", error: examError.message });
+  }
+}
+
+const deleteExam = async (req, res) => { // done
+  try {
+    const { id } = req.params;
+
+    const deletedExam = await EXAM.findByIdAndDelete(id);
+    if (!deletedExam) {
+      return res.status(404).json({ msg: "Exam not found." });
+    }
+
+    res.status(200).json({ msg: "Exam removed successfully", exam: deletedExam });
+  } catch (error) {
+    res.status(500).json({ msg: "Error removing Exam", error: error.message });
+  }
+};
+
 module.exports = {
   getStudent,
   createStudent,
   deleteStudent,
   updateStudent,
   getAllStudents,
+  getAllAccounts,
+  getAccount,
+  updateAccount,
+  deleteAccount,
+  createStudentAccount,
   getAllExams,
-  getExam, createExam
+  getExam,
+  createExam,
+  updateExam,
+  deleteExam
 };
