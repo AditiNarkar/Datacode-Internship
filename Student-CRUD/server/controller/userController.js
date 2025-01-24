@@ -20,22 +20,33 @@ const getStudent = async (req, res) => { // done
 }
 
 const getAllStudents = async (req, res) => { //done
-  let { query: { page = 1, limit = 5, sort, search, ...rest } } = req;
+  let { query: { page = 1, limit = 5, search, ...rest } } = req;
   const skip = (page - 1) * limit;
 
   let sortArr = "rollno";
   let filterQuery = {};
+  let sortFields = []
 
-  sortArr = (sort) ? (sort.split(',')) : ([sortArr])
-  let sortBy = {};
+  // sortArr = (sort) ? (sort.split(',')) : ([sortArr])
+  // let sortBy = {};
 
-  sortBy[sortArr[0]] = (sortArr[1]) ? sortArr[1] : "asc";
+  // sortBy[sortArr[0]] = (sortArr[1]) ? sortArr[1] : "asc";
+
+  console.log("rest:", rest)
 
   Object.entries(rest).forEach(([key, value]) => { // Object.entries => object into an array of key-value pairs
-    // if (key === "sort") {
-    //   const [field, order] = value.split(",");
-    //   sortFields.push({ [field]: order === "asc" ? 1 : -1 });
-    filterQuery[key] = value;
+    if (key === "sort") {
+      console.log("val:", value)
+      if (Array.isArray(value)) { // if more than 1 value, it gets into array
+        value.forEach((sortParam) => {
+          const [field, order] = sortParam.split(",");
+          sortFields.push({ [field]: order === "asc" ? 1 : -1 });
+        });
+      }
+    }
+    else {
+      filterQuery[key] = value;
+    }
   });
 
   // const sortQuery = sortFields.reduce((accumulator, field) => ({ ...accumulator, ...field }), {});
@@ -43,7 +54,7 @@ const getAllStudents = async (req, res) => { //done
   // [{ age: 1 }, { year: -1 }] -> accumulator = { age: 1, year: -1 }
 
   // or
-  // const sortQuery = Object.assign({}, ...sortFields); // merge multiple objects into one.
+  const sortQuery = Object.assign({}, ...sortFields); // merge multiple objects into one.
   // [{ age: 1 }, { year: -1 }] -> { age: 1, year: -1 }
 
   if (search) {
@@ -53,13 +64,13 @@ const getAllStudents = async (req, res) => { //done
     ];
   }
   console.log("filter:", filterQuery)
-  console.log("sort:", sortArr, sortBy)
+  console.log("sort:", sortArr, sortQuery)
 
   try {
     const students = await Student.find(filterQuery)
       .skip(skip)
       .limit(limit)
-      .sort(sortBy)
+      .sort(sortQuery)
       .exec()
 
     const total = await Student.countDocuments(filterQuery);
