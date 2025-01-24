@@ -225,7 +225,7 @@ const createStudentAccount = async (req, res) => {//done
   }
 }
 
-const updateAccount = async (req, res) => { //updating bank details remaining
+const updateAccount = async (req, res) => { //done
   const { params: { id }, body: updates } = req;
   try {
     const updated = await Account.findByIdAndUpdate(
@@ -243,16 +243,24 @@ const updateAccount = async (req, res) => { //updating bank details remaining
   }
 }
 
-const deleteAccount = async (req, res) => { // updating bank details remaining
+const deleteAccount = async (req, res) => { // done
   try {
-    const { id } = req.params;
+    const { aid, sid } = req.params;
 
-    const deleted = await Account.findByIdAndDelete(id);
+    const deleted = await Account.findByIdAndDelete(aid);
     if (!deleted) {
       return res.status(404).json({ msg: "account not found." });
     }
 
-    res.status(200).json({ msg: "account removed successfully", account: deleted });
+    const deleteBank = await Student.findOneAndUpdate(
+      { _id: sid },
+      { $set: { bankDetail: null } }, // $unset will completely remove field
+      { new: true }
+    );
+    if (!deleteBank) {
+      return res.status(404).json({ msg: "deleteBank not found." });
+    }
+    res.status(200).json({ msg: "account removed successfully", student: deleteBank });
   } catch (error) {
     res.status(500).json({ msg: "Error removing account", error: error.message });
   }
