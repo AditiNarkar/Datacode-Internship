@@ -27,21 +27,23 @@ const getAllStudents = async (req, res) => { //done
   let filterQuery = {};
   let sortFields = []
 
-  // sortArr = (sort) ? (sort.split(',')) : ([sortArr])
-  // let sortBy = {};
-
-  // sortBy[sortArr[0]] = (sortArr[1]) ? sortArr[1] : "asc";
-
   console.log("rest:", rest)
 
   Object.entries(rest).forEach(([key, value]) => { // Object.entries => object into an array of key-value pairs
     if (key === "sort") {
       console.log("val:", value)
+      
       if (Array.isArray(value)) { // if more than 1 value, it gets into array
+        
         value.forEach((sortParam) => {
+          console.log("sortparam:", sortParam)
           const [field, order] = sortParam.split(",");
           sortFields.push({ [field]: order === "asc" ? 1 : -1 });
         });
+      }
+      else { // if 1 value then value = age,1
+        const [field, order] = value.split(",");
+        sortFields.push({ [field]: order === "asc" ? 1 : -1 });
       }
     }
     else {
